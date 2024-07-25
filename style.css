@@ -53,6 +53,6 @@ body {
   background-color: cadetblue;
 }
 #buttons div.zero {
-  flex-basis: 49%;
-  aspect-ratio: 24/10;
+  flex-basis: 49.2%;
+  aspect-ratio: 24.5/10;
 }
