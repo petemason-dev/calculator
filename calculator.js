@@ -96,20 +96,20 @@ function setDisplayValue(value) {
     //truncate to fit the display if required
     formattedValue = value.toString();
 
-    if (Number.isInteger(value)) {
-      //TODO handle exponentials
-    } else if (formattedValue.length > displayLength) {
-      console.log("Value: " + value);
-
-      if (value < 1) {
-        formattedValue = value.toPrecision(displayLength - 2);
+    if (formattedValue.length > displayLength) {
+      if (Number.isInteger(value)) {
+        //console.log("Value: " + value);
+        formattedValue = value.toExponential(4);
       } else {
-        formattedValue = value.toPrecision(displayLength - 1);
-      }
+        if (value < 1) {
+          formattedValue = value.toPrecision(displayLength - 2);
+        } else {
+          formattedValue = value.toPrecision(displayLength - 1);
+        }
 
-      //remove any trailing [.0] from the formattedValue
-      const regEx = /\.*0+$/i;
-      formattedValue = formattedValue.replace(regEx, "");
+        //remove any trailing [.0] from the formattedValue
+        formattedValue = formattedValue.replace(/\.*0+$/i, "");
+      }
     }
   } else if (typeof value === "string") {
     formattedValue = value;
@@ -119,7 +119,7 @@ function setDisplayValue(value) {
   display.innerHTML = formattedValue;
 }
 function addToDisplay(digit) {
-  let newDisplay = "";
+  let newDisplay = displayValue;
 
   if (overwriteDisplay) {
     newDisplay = digit;
