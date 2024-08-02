@@ -50,12 +50,16 @@ function handleInput(input) {
       case "AC":
       case "Escape":
         clearDisplay();
+        clearValues();
         break;
       case "+":
       case "-":
       case "*":
       case "/":
+      case "=":
+      case "Enter":
         //operate
+        manageOperation(input);
         break;
       case "9":
       case "8":
@@ -80,13 +84,30 @@ function handleInput(input) {
   Perform Calculations
 */
 
-let firstNumber, operator, secondNumber;
+let previousNumber, previousOperator;
 let displayValue = "0";
 let overwriteDisplay = true; //overwrite the displayed number on next digit input
 
 function setDisplayValue(value) {
-  displayValue = value;
-  display.innerHTML = value;
+  let formattedValue = "0";
+
+  //value could be a string or a number
+  if (typeof value === "number") {
+    //truncate to fit the display if required
+    //TODO handle long values
+    formattedValue = value.toString();
+    if (formattedValue.length > displayLength) {
+      //long decimal?
+
+      //long exponential?
+      formattedValue = value.toPrecision(displayLength);
+    }
+  } else if (typeof value === "string") {
+    formattedValue = value;
+  }
+
+  displayValue = formattedValue;
+  display.innerHTML = formattedValue;
 }
 function addToDisplay(digit) {
   //do nothing if we've reached the maximum display character length
@@ -110,6 +131,30 @@ function addToDisplay(digit) {
   }
 }
 
+function manageOperation(operator) {
+  let currentNumber, result;
+
+  //if firstNumber isn't set then set it to the current display value & set operator
+  if (previousNumber === undefined) {
+    previousNumber = Number(displayValue);
+    previousOperator = operator;
+  } else {
+    //if firstNumber is set, then operate on firstNumber and current display value
+    //then set operator to the new operator value
+    //and set the value of firstNumber to the result
+
+    currentNumber = Number(displayValue);
+
+    result = operate(previousOperator, previousNumber, currentNumber);
+    setDisplayValue(result);
+
+    previousNumber = result;
+    previousOperator = operator;
+  }
+
+  overwriteDisplay = true;
+}
+
 function operate(operator, number1, number2) {
   switch (operator) {
     case "+":
@@ -120,12 +165,18 @@ function operate(operator, number1, number2) {
       return multiply(number1, number2);
     case "/":
       return divide(number1, number2);
+    default:
+      return number2;
   }
 }
 
 function clearDisplay() {
   setDisplayValue("0");
   overwriteDisplay = true;
+}
+function clearValues() {
+  previousNumber = undefined;
+  previousOperator = "";
 }
 
 function add(number1, number2) {
