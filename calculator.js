@@ -94,13 +94,22 @@ function setDisplayValue(value) {
   //value could be a string or a number
   if (typeof value === "number") {
     //truncate to fit the display if required
-    //TODO handle long values
     formattedValue = value.toString();
-    if (formattedValue.length > displayLength) {
-      //long decimal?
 
-      //long exponential?
-      formattedValue = value.toPrecision(displayLength);
+    if (Number.isInteger(value)) {
+      //TODO handle exponentials
+    } else if (formattedValue.length > displayLength) {
+      console.log("Value: " + value);
+
+      if (value < 1) {
+        formattedValue = value.toPrecision(displayLength - 2);
+      } else {
+        formattedValue = value.toPrecision(displayLength - 1);
+      }
+
+      //remove any trailing [.0] from the formattedValue
+      const regEx = /\.{1}0+$/i;
+      formattedValue = formattedValue.replace(regEx, "");
     }
   } else if (typeof value === "string") {
     formattedValue = value;
@@ -110,23 +119,21 @@ function setDisplayValue(value) {
   display.innerHTML = formattedValue;
 }
 function addToDisplay(digit) {
-  //do nothing if we've reached the maximum display character length
-  if (displayValue.length < displayLength) {
-    if (overwriteDisplay) {
-      if (digit === ".") {
-        setDisplayValue("0.");
-      } else {
-        setDisplayValue(digit);
-      }
-      overwriteDisplay = false;
+  if (overwriteDisplay) {
+    if (digit === ".") {
+      setDisplayValue("0.");
     } else {
-      if (digit === "." && displayValue.includes(".")) {
-        //don't add a second "."
-      } else if (displayValue === "0") {
-        setDisplayValue(digit);
-      } else {
-        setDisplayValue(displayValue + digit);
-      }
+      setDisplayValue(digit);
+    }
+    overwriteDisplay = false;
+  } else if (displayValue.length < displayLength) {
+    //do nothing if we've reached the maximum display character length
+    if (digit === "." && displayValue.includes(".")) {
+      //don't add a second "."
+    } else if (displayValue === "0") {
+      setDisplayValue(digit);
+    } else {
+      setDisplayValue(displayValue + digit);
     }
   }
 }
@@ -144,6 +151,7 @@ function manageOperation(operator) {
     //and set the value of firstNumber to the result
 
     currentNumber = Number(displayValue);
+    console.log("currentNumber: " + currentNumber);
 
     result = operate(previousOperator, previousNumber, currentNumber);
     setDisplayValue(result);
