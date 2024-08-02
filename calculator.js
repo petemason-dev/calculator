@@ -51,6 +51,12 @@ function handleInput(input) {
       case "Escape":
         clearDisplay();
         break;
+      case "+":
+      case "-":
+      case "*":
+      case "/":
+        //operate
+        break;
       case "9":
       case "8":
       case "7":
@@ -76,6 +82,7 @@ function handleInput(input) {
 
 let firstNumber, operator, secondNumber;
 let displayValue = "0";
+let overwriteDisplay = true; //overwrite the displayed number on next digit input
 
 function setDisplayValue(value) {
   displayValue = value;
@@ -84,22 +91,20 @@ function setDisplayValue(value) {
 function addToDisplay(digit) {
   //do nothing if we've reached the maximum display character length
   if (displayValue.length < displayLength) {
-    switch (digit) {
-      case ".":
-        //if the digit is a "." then add it unless there's already a "."
-        if (displayValue.includes(".") === false)
-          setDisplayValue(displayValue + digit);
-        break;
-      default:
-        //don't add another 0 if the displayValue is just a "0"
-        if (displayValue === "0") {
-          setDisplayValue(digit);
-        } else {
-          setDisplayValue(displayValue + digit);
-        }
+    if (overwriteDisplay) {
+      if (digit === ".") {
+        setDisplayValue("0.");
+      } else {
+        setDisplayValue(digit);
+      }
+      overwriteDisplay = false;
+    } else {
+      if (digit === "." && displayValue.includes(".")) {
+        //don't add a second "."
+      } else {
+        setDisplayValue(displayValue + digit);
+      }
     }
-
-    //if the display is currently "0", replace it with this digit unless it's a "."
   }
 }
 
@@ -118,6 +123,7 @@ function operate(operator, number1, number2) {
 
 function clearDisplay() {
   setDisplayValue("0");
+  overwriteDisplay = true;
 }
 
 function add(number1, number2) {
