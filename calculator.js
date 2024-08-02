@@ -108,7 +108,7 @@ function setDisplayValue(value) {
       }
 
       //remove any trailing [.0] from the formattedValue
-      const regEx = /\.{1}0+$/i;
+      const regEx = /\.*0+$/i;
       formattedValue = formattedValue.replace(regEx, "");
     }
   } else if (typeof value === "string") {
