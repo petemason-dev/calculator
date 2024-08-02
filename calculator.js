@@ -119,23 +119,26 @@ function setDisplayValue(value) {
   display.innerHTML = formattedValue;
 }
 function addToDisplay(digit) {
+  let newDisplay = "";
+
   if (overwriteDisplay) {
-    if (digit === ".") {
-      setDisplayValue("0.");
-    } else {
-      setDisplayValue(digit);
-    }
+    newDisplay = digit;
     overwriteDisplay = false;
   } else if (displayValue.length < displayLength) {
     //do nothing if we've reached the maximum display character length
     if (digit === "." && displayValue.includes(".")) {
       //don't add a second "."
+      newDisplay = displayValue;
     } else if (displayValue === "0") {
-      setDisplayValue(digit);
+      newDisplay = digit;
     } else {
-      setDisplayValue(displayValue + digit);
+      newDisplay = displayValue + digit;
     }
   }
+
+  if (newDisplay === ".") newDisplay = "0.";
+
+  setDisplayValue(newDisplay);
 }
 
 function manageOperation(operator) {
