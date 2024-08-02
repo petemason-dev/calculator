@@ -101,6 +101,8 @@ function addToDisplay(digit) {
     } else {
       if (digit === "." && displayValue.includes(".")) {
         //don't add a second "."
+      } else if (displayValue === "0") {
+        setDisplayValue(digit);
       } else {
         setDisplayValue(displayValue + digit);
       }
